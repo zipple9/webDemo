@@ -12,14 +12,18 @@
 
         var speed=100; //速度 定时器间隔
 
+        var base; //地图基点
+
         //地图类
         function Map()
         {
-            this.width=1400; //地图宽度
-            this.height=700; //地图高度
+            this.width=140*base; //地图宽度
+            this.height=70*base; //地图高度
             this.position='absolute'; //定位方式
             this.color='#cccccc'; //地图颜色
             this._map=null; //保存地图dom元素
+
+            this._gridLines=null; //网格线dom
 
             this.show=function()
             {
@@ -35,8 +39,21 @@
                 //将地图div元素追加到body标签之间
                 document.getElementsByTagName('body')[0].appendChild(this._map);
             };
-        }
 
+            this.showGridLines=function()
+            {
+
+                 this._gridLines=document.createElement('hr');
+                 this._gridLines.style.position='absolute';
+                this._gridLines.style.left=100+'px';
+                this._gridLines.style.top=500+'px';
+
+                map._map.appendChild(this._gridLines);
+
+            }
+
+
+        }
         //食物类
         function Food()
         {
@@ -73,7 +90,6 @@
 
             };
         }
-
         //蛇类
         function Snake()
         {
@@ -197,10 +213,10 @@
                 this.show();
             }
         }
-
         function initialize()
         {
             map.show();    //显示地图
+            map.showGridLines();
 
             food.show(); //显示食物
 
@@ -228,13 +244,16 @@
             location.reload();
 
         }
-
         function speedSwitch(sp)
         {
             clearInterval(timer);
             speed=sp;
             timer = setInterval('snake.move()',speed);
         }
+
+
+        base=10;
+
         map = new Map(); //实例化地图类对象
 
         food=new Food(); //实例化食物类对象

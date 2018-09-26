@@ -1,0 +1,86 @@
+<!--canvas绘制网格-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        #canvas{background-color:#F0F0F0;}
+    </style>
+</head>
+<body>
+<div>
+    从这里开始：<br>
+    <button>start</button>
+</div>
+<!--<canvas id="canvas1" width="800" height="600">-->
+    <!--你的浏览器不支持canvas-->
+<!--</canvas>-->
+<div id="main">
+    
+</div>
+
+<input type="checkbox" id="guid" checked />网格
+<script>
+    // var canvas = document.getElementById('canvas'),
+    //     context = canvas.getContext('2d'),
+    var base=10;
+    var map;
+    var guid = document.getElementById('guid');
+
+
+    
+    function map() {
+        this._map=null; //dom
+
+
+        this.show=function(){
+            this._map=document.createElement('canvas');
+            this._map.width=140*base;
+            this._map.height=70*base;
+            this._map.style.backgroundColor='#F8F8FF';
+            this._map.style.border='0.5px solid #000000';
+            this._map.id='canvas_map';
+
+            document.getElementById('main').appendChild(this._map);
+
+        }
+    }
+
+    //绘制网格线
+    function drawGuid(){
+        var canvas=document.getElementById('canvas_map');
+        var context=canvas.getContext('2d');
+        context.save();
+
+        for(var i=base+0.5;i<canvas.width;i+=base){
+            context.beginPath();
+            context.lineWidth = 0.5;
+            context.strokeStyle = "rgb(211,211,211)";
+            context.moveTo(i,0);
+            context.lineTo(i,canvas.height-0.5);  //-0.5是防止网格切边框
+            context.closePath();
+            context.stroke();
+        }
+        for(var i=base+0.5;i<canvas.height;i+=base){
+            context.beginPath();
+            context.lineWidth = 0.5;
+            context.strokeStyle = "rgb(211,211,211)";
+            context.moveTo(0,i);
+            context.lineTo(canvas.width-0.5,i);
+            context.closePath();
+            context.stroke();
+        }
+    }
+    map=new map();
+    map.show();
+    drawGuid();
+
+    guid.onchange = function(){
+        var canvas=document.getElementById('canvas_map');
+        var context=canvas.getContext('2d');
+        guid.checked && drawGuid();  //这个写法蛮高级的
+        guid.checked || context.clearRect(0,0,canvas.width,canvas.height);
+    }
+</script>
+</body>
+</html>
