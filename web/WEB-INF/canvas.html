@@ -4,54 +4,70 @@
 <head>
     <meta charset="utf-8">
     <style>
-        #canvas{background-color:#F0F0F0;}
+        #canvas{background-color:rgb(0,240,200);}
     </style>
 </head>
 <body>
 <div>
     从这里开始：<br>
-    <button>start</button>
+    <button onclick="start()">start</button>
+    <button onclick="initialization()">reset</button>
+    <br>
+    Resource(1-100)<Textarea rows="1" cols="5" id="resource" style="resize:none;" >50</Textarea>
 </div>
 <!--<canvas id="canvas1" width="800" height="600">-->
     <!--你的浏览器不支持canvas-->
 <!--</canvas>-->
 <div id="main">
-    
+<canvas id="canvas_map"></canvas>
+
 </div>
 
-<input type="checkbox" id="guid" checked />网格
 <script>
-    // var canvas = document.getElementById('canvas'),
-    //     context = canvas.getContext('2d'),
     var base=10;
     var map;
-    var guid = document.getElementById('guid');
+    var mapWidth=140;
+    var mapHeight=70;
+
+    var UP1xy=[];
+    var UP2xy=[];
+    var UP1='red';
+    var UP2='blue';
 
 
-    
-    function map() {
+    var canvas=document.getElementById('canvas_map');
+    var context=canvas.getContext('2d');
+
+
+    var coordinate=function () {
+        var coordinate=new Array();
+        for(var i=0;i<mapWidth;i++){
+            for(var j=0;j<mapHeight;j++){
+                coordinate.push(new Array(i,j));
+            }
+        }
+        return coordinate;
+    }
+    function Map() {
         this._map=null; //dom
 
 
         this.show=function(){
-            this._map=document.createElement('canvas');
-            this._map.width=140*base;
-            this._map.height=70*base;
+            this._map=document.getElementById('canvas_map');
+            this._map.width=mapWidth*base;
+            this._map.height=mapHeight*base;
             this._map.style.backgroundColor='#F8F8FF';
             this._map.style.border='0.5px solid #000000';
-            this._map.id='canvas_map';
+            // this._map.style.position='relative';
+            // this._map.style.top='60px';
+            // this._map.style.left='10px';
 
-            document.getElementById('main').appendChild(this._map);
+
 
         }
-    }
-
-    //绘制网格线
+    } //main 地图
     function drawGuid(){
-        var canvas=document.getElementById('canvas_map');
-        var context=canvas.getContext('2d');
-        context.save();
-
+        // context.save();    //暂时不知道save的意义 就是储存画布的状态
         for(var i=base+0.5;i<canvas.width;i+=base){
             context.beginPath();
             context.lineWidth = 0.5;
@@ -70,17 +86,195 @@
             context.closePath();
             context.stroke();
         }
-    }
-    map=new map();
-    map.show();
-    drawGuid();
+    }//绘制网格线
 
-    guid.onchange = function(){
-        var canvas=document.getElementById('canvas_map');
-        var context=canvas.getContext('2d');
-        guid.checked && drawGuid();  //这个写法蛮高级的
-        guid.checked || context.clearRect(0,0,canvas.width,canvas.height);
+    // function guidOnChange(){
+    //     // guid.checked && drawGuid();  //这个写法蛮高级的，也不算高级。一个简单if else就行
+    //     // guid.checked || context.clearRect(0,0,canvas.width,canvas.height);
+    //     if(guid.checked)
+    //     {drawGuid();}
+    //     else
+    //     {context.clearRect(0,0,canvas.width,canvas.height);}
+    // }
+
+    function createResource(){
+        var RP5="rgb(0,80,0)",RP4="rgb(0,160,0)",RP3="rgb(0,240,100)",RP2="rgb(27,216,53)",RP1="rgb(32,255,63)";
+        var RPx;
+        var RPy;
+        var rs=document.getElementById("resource").value; //获取textarea的后续变化值 这里不能用innerhtml，
+        // alert(rs);
+        for (var i = 0; i <rs ; i++) {
+            RPx=Math.round(Math.random()*mapWidth)*base;
+            RPy=Math.round(Math.random()*mapHeight)*base;
+            context.fillStyle=RP5;
+            context.fillRect(RPx,RPy,base,base);
+            // function up(x,y){
+            //     var xy= ([x,y-1],[x-1,y],[x+1,y]);
+            //     for (var i = 0; i <3 ; i++) {
+            //         context.fillRect(xy[0][0],xy[0][1],base,base);
+            //     }
+            //
+            // }
+            // context.fillStyle=RP5;
+            // context.fillRect(RPx,RPy,base,base);
+            // context.fillStyle=RP4;
+            // context.fillRect(RPx,RPy-base,base,base);   //上
+            // context.fillStyle=RP3;
+            // context.fillRect(RPx,RPy-2*base,base,base);
+            // context.fillStyle=RP2;
+            // context.fillRect(RPx,RPy-3*base,base,base);
+            // context.fillStyle=RP1;
+            // context.fillRect(RPx,RPy-4*base,base,base);
+            // context.fillRect(RPx-base,RPy-4*base,base,base);
+            // context.fillRect(RPx+base,RPy-4*base,base,base);
+            //
+            // context.fillStyle=RP3;
+            // context.fillRect(RPx-base,RPy-2*base,base,base);
+            // context.fillRect(RPx+base,RPy-2*base,base,base);
+            //
+            // context.fillStyle=RP1;
+            // context.fillRect(RPx-base,RPy-base,base,base);
+            // context.fillRect(RPx+base,RPy-base,base,base);
+            //
+            //
+            // context.fillStyle=RP4;
+            // context.fillRect(RPx,RPy+base,base,base); //下
+            // context.fillStyle=RP3;
+            // context.fillRect(RPx,RPy+2*base,base,base);
+            // context.fillRect(RPx-base,RPy+base,base,base);
+            // context.fillRect(RPx+base,RPy+base,base,base);
+            //
+            //
+            //
+            //
+            // context.fillStyle=RP4;
+            // context.fillRect(RPx-base,RPy,base,base); // 左
+            // context.fillStyle=RP3;
+            // context.fillRect(RPx-2*base,RPy,base,base);
+            // context.fillRect(RPx-base,RPy-base,base,base);
+            // context.fillRect(RPx-base,RPy+base,base,base);
+            //
+            // context.fillStyle=RP4;
+            // context.fillRect(RPx+base,RPy,base,base); //右
+            // context.fillStyle=RP3;
+            // context.fillRect(RPx+2*base,RPy,base,base);
+            // context.fillRect(RPx+base,RPy-base,base,base);
+            // context.fillRect(RPx+base,RPy+base,base,base);
+        }
+        for (i = 0; i <rs*2 ; i++) {
+            RPx = Math.round(Math.random() * mapWidth) * base ;
+            RPy = Math.round(Math.random() * mapHeight) * base ;
+            context.fillStyle = RP4;
+            context.fillRect(RPx, RPy, base, base);
+        }
+        for (i = 0; i <rs*3 ; i++) {
+            RPx = Math.round(Math.random() * mapWidth) * base ;
+            RPy = Math.round(Math.random() * mapHeight) * base ;
+            context.fillStyle = RP3;
+            context.fillRect(RPx, RPy, base, base);
+        }
+        for (i = 0; i <rs*4 ; i++) {
+            RPx = Math.round(Math.random() * mapWidth) * base ;
+            RPy = Math.round(Math.random() * mapHeight) * base ;
+            context.fillStyle = RP2;
+            context.fillRect(RPx, RPy, base, base);
+        }
+        for (i = 0; i <rs*5 ; i++) {
+            RPx = Math.round(Math.random() * mapWidth) * base ;
+            RPy = Math.round(Math.random() * mapHeight) * base ;
+            context.fillStyle = RP1;
+            context.fillRect(RPx, RPy, base, base);
+        }
+
+
+        }
+    function createUnit() {
+        var UPx,UPy;
+        for (var i = 0; i <1 ; i++) {
+            UPx = Math.round(Math.random() * mapWidth) * base;
+            UPy = Math.round(Math.random() * mapHeight) * base;
+            context.fillStyle = UP1;
+            context.fillRect(UPx, UPy, base, base);
+            UP1xy.push([UPx,UPy]);
+
+        }
+        for (var i = 0; i <1 ; i++) {
+            UPx = Math.round(Math.random() * mapWidth) * base;
+            UPy = Math.round(Math.random() * mapHeight) * base;
+            context.fillStyle = UP2;
+            context.fillRect(UPx, UPy, base, base);
+            UP2xy.push([UPx,UPy]);
+
+        }
+
     }
+
+    function Unit() {
+        var xy;
+        this.baseBuild=function (UPxy,UP) {
+            var out=this.outskirts(UPxy);
+            xy=out[Math.round(Math.random()*out.length)];
+            context.fillStyle=UP;
+            context.fillRect(xy[0],xy[1],base,base);
+        }
+        this.outskirts=function (UPxy) {
+            var out=[];
+            for (var i = 0; i <UPxy.length ; i++) {
+                out.push(UPxy[i][0],UPxy[i][1]-base);//
+                out.push(UPxy[i][0],UPxy[i][1]+base);//
+                out.push(UPxy[i][0]-base,UPxy[i][1]);//
+                out.push(UPxy[i][0]+base,UPxy[i][1]);//
+            }
+            var temp=[];
+            for (var i = 0; i <out.length ; i++) {
+                if(temp.indexOf(out[i]) == -1){
+                    temp.push(out[i]);
+                }
+            }
+            out=temp; //给out去重
+            for (var i = 0; i <out.length ; i++) {
+                if(UPxy.indexOf(out[i]) !=-1){
+                    out.splice(i,1);
+                }
+            } //剔除与UPxy中相同的坐标
+            return out;
+        }
+    }
+
+    function fillSquare(x,y){
+        context.fillRect(x,y,base,base);
+    }
+    function initialization(){
+        map=new Map();
+        map.show();
+        drawGuid();
+    }
+    function start(){
+        initialization();
+        createResource();
+        createUnit();
+        var unit=new Unit();
+        unit.baseBuild(UP1xy,UP1);
+
+
+    }
+
+    initialization();
+
+    // var color;
+    // context.fillStyle='red';
+    // context.fillRect(50.5,50.5,100,100);
+    // color=context.getImageData(50.5,50.5,1,1).data;
+    // alert(color[0]+','+color[1]+','+color[2]);
+    // context.fillStyle='blue';
+    // context.fillRect(40,40,100,100);
+    // color=context.getImageData(50,50,1,1).data;
+    // alert(color[0]+','+color[1]+','+color[2]);
+
+
+
+
+
 </script>
 </body>
 </html>

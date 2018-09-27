@@ -40,17 +40,6 @@
                 document.getElementsByTagName('body')[0].appendChild(this._map);
             };
 
-            this.showGridLines=function()
-            {
-
-                 this._gridLines=document.createElement('hr');
-                 this._gridLines.style.position='absolute';
-                this._gridLines.style.left=100+'px';
-                this._gridLines.style.top=500+'px';
-
-                map._map.appendChild(this._gridLines);
-
-            }
 
 
         }
@@ -216,7 +205,6 @@
         function initialize()
         {
             map.show();    //显示地图
-            map.showGridLines();
 
             food.show(); //显示食物
 
