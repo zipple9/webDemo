@@ -11,12 +11,28 @@
     从这里开始：<br>
     <button onclick="start()">start</button>
     <button onclick="initialization()">reset</button>
-    <button onclick=
-        "for(var i = 0; i <150 ; i++) {
-            baseBuild(UP1xy,UP1);
-         }
-        ">
-        add</button>
+
+    <table border="1" >
+        <col width="40">
+        <col width="160">
+        <tr><th colspan="2"><span style="color: red">Player 1</span></th></tr>
+        <tr><td>Base</td><td id="Base1">111</td></tr>
+        <tr><td>Factory</td><td id="Factory1">111</td></tr>
+        <tr><td>Lab</td><td id="Lab1">111</td></tr>
+        <tr><td>Military</td><td id="Military1">111</td></tr>
+        <tr><td style="font-weight: bolder">Resource</td><td id="Resource1">111</td></tr>
+
+    </table>
+    <table border="1" style="position:absolute;left:260px;top:52px" >
+        <col width="40">
+        <col width="160">
+        <tr><th colspan="2"><span style="color: blue">Player 2</span></th></tr>
+        <tr><td>1</td><td>111</td></tr>
+        <tr><td>1</td><td>111</td></tr>
+        <tr><td>1</td><td>111</td></tr>
+        <tr><td>1</td><td>111</td></tr>
+    </table>
+
     <br>
     Resource(1-100)<Textarea rows="1" cols="5" id="resource" style="resize:none;" >50</Textarea>
 </div>
@@ -25,7 +41,11 @@
 <!--</canvas>-->
 <div id="main">
 <canvas id="canvas_map"></canvas>
+</div>
 
+<div>
+    日志：
+    <p id="log"></p>
 </div>
 
 <script>
@@ -42,8 +62,9 @@
 
 
     var timer; //定时器对象
+    var logNo=1;
 
-    var speed=400; //游戏速度
+    var speed=800; //游戏速度
 
     var canvas=document.getElementById('canvas_map');
     var context=canvas.getContext('2d');
@@ -226,19 +247,41 @@
 
         var color=colorTest(xy);
         fillSquare(xy,UP);
+        logCreateUnit(xy,UP);
+
         switch (color)
         {
             case RP5:
-                context.strokeText('5',xy[0],xy[1],10);
+                context.beginPath();
+                context.moveTo(xy[0],xy[1]);
+                context.lineTo(xy[0],xy[1]+base);
+                context.lineTo(xy[0]+base,xy[1]+base);
+                context.fillStyle=RP5;
+                context.fill();
                 break;
             case RP4:
-                context.strokeText('4',xy[0],xy[1],10);
+                context.beginPath();
+                context.moveTo(xy[0],xy[1]);
+                context.lineTo(xy[0],xy[1]+base);
+                context.lineTo(xy[0]+base,xy[1]+base);
+                context.fillStyle=RP4;
+                context.fill();
                 break;
             case RP3:
-                context.strokeText('3',xy[0],xy[1],10);
+                context.beginPath();
+                context.moveTo(xy[0],xy[1]);
+                context.lineTo(xy[0],xy[1]+base);
+                context.lineTo(xy[0]+base,xy[1]+base);
+                context.fillStyle=RP3;
+                context.fill();
                 break;
             case RP2:
-                context.strokeText('2',xy[0],xy[1],10);
+                context.beginPath();
+                context.moveTo(xy[0],xy[1]);
+                context.lineTo(xy[0],xy[1]+base);
+                context.lineTo(xy[0]+base,xy[1]+base);
+                context.fillStyle=RP2;
+                context.fill();
                 break;
             case RP1:
                 context.beginPath();
@@ -250,6 +293,7 @@
                 break;
         }
         UPxy.push(xy);
+        // alert(UPxy);
 
 
     }//随机在out区域建造base
@@ -263,7 +307,7 @@
         } //取包围的所有坐标
         for (var i = 0; i <out.length ; i++) {
             if(out[i][0]<0 || out[i][1]<0){
-                out.splice(i,1)
+                out.splice(i,1,[0])
             }
         }// 去掉负数坐标
         var hash={};
@@ -274,13 +318,24 @@
                 hash[out[i]]=true;
             }
         }
-        out=temp; //给out去重
-        for (var i = 0; i <out.length ; i++) {
-            if(hash[UPxy[i]]){
-                out.splice(i,1);
+        out=temp.slice(0); //深复制 temp
+        temp=[];
+        //给out去重
+        for (var i = 0; i <out.length ; i++)
+        {
+            for (var j = 0; j <UPxy.length ; j++)
+            {
+                if(out[i][0]==UPxy[j][0]&&out[i][1]==UPxy[j][1])
+                {
+                    out.splice(i,1,[0]);
+                }
             }
+            if(out[i][0]!=0){
+                temp.push(out[i]);
+            }
+
         } //剔除与UPxy中相同的坐标
-        return out;
+        return temp;
     }//计算out区域坐标集
 
     function fillSquare(xy,color){
@@ -293,7 +348,30 @@
         return color;
 
     }
+    
+    function logCreateUnit(xy,p){
+        var logtxt=document.getElementById("log");
+        logtxt.innerHTML=logtxt.innerHTML+logNo+'. <span style=\"color:'+p+'\"'+'>'+p+'玩家'+'</span>'+'在坐标'+xy+'建造基地<br>';
+        //拼接字符串 修改样式
+        logNo+=1;
+    }
+    function dataCount() {
+        document.getElementById('Base1').innerHTML=UP1xy.length.toString();
+    }
 
+    function bugDetector(UPxy){
+        var hash={};
+        var temp=[];
+        for (var i = 0; i <UPxy.length ; i++) {
+            if(!hash[UPxy[i]]){
+                temp.push(UPxy[i]);
+                hash[UPxy[i]]=true;
+            }
+            else{
+                alert('UPxy 坐标有误')
+            }
+        }
+    }
 
 
     function initialization(){
@@ -310,6 +388,8 @@
         timer=setInterval('run()',speed);
     }
     function run(){
+        dataCount();
+        bugDetector(UP1xy);
         baseBuild(UP1xy,UP1); //这里有一个先后问题，p1优先，方便后续逻辑判断。
         baseBuild(UP2xy,UP2);
 
