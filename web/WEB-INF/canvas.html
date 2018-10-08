@@ -60,6 +60,9 @@
     var UP2='blue';
     var RP5="rgb(0,80,0)",RP4="rgb(0,160,0)",RP3="rgb(0,240,100)",RP2="rgb(27,216,53)",RP1="rgb(32,255,63)";
 
+    var RP1Sum=[1,0,0,0,0,0];
+    var RP2Sum=[1,0,0,0,0,0];
+    var RGain1=0;
 
     var timer; //定时器对象
     var logNo=1;
@@ -238,10 +241,16 @@
         }
 
     }
-
+    function resourceGain(UPxy,RPSum,RGain) {
+        RPSum[0]=UPxy.length;
+        RGain=RPSum[0]+RPSum[1]*2+RPSum[2]*4+RPSum[3]*6+RPSum[4]*8+RPSum[5]*10+RGain;
+        document.getElementById('Resource1').innerHTML=RGain.toString();
+        return RGain;
+    } //计算并显示RP
+    
     function Unit() {
     }
-    function baseBuild(UPxy,UP) {
+    function baseBuild(UPxy,UP,RPsum) {
         var out=this.outskirts(UPxy);
         var xy=out[Math.round(Math.random()*(out.length-1))];
 
@@ -258,6 +267,7 @@
                 context.lineTo(xy[0]+base,xy[1]+base);
                 context.fillStyle=RP5;
                 context.fill();
+                RPsum[5]=RPsum[5]+1;
                 break;
             case RP4:
                 context.beginPath();
@@ -266,6 +276,7 @@
                 context.lineTo(xy[0]+base,xy[1]+base);
                 context.fillStyle=RP4;
                 context.fill();
+                RPsum[4]=RPsum[4]+1;
                 break;
             case RP3:
                 context.beginPath();
@@ -274,6 +285,7 @@
                 context.lineTo(xy[0]+base,xy[1]+base);
                 context.fillStyle=RP3;
                 context.fill();
+                RPsum[3]=RPsum[3]+1;
                 break;
             case RP2:
                 context.beginPath();
@@ -282,6 +294,7 @@
                 context.lineTo(xy[0]+base,xy[1]+base);
                 context.fillStyle=RP2;
                 context.fill();
+                RPsum[2]=RPsum[2]+1;
                 break;
             case RP1:
                 context.beginPath();
@@ -290,6 +303,7 @@
                 context.lineTo(xy[0]+base,xy[1]+base);
                 context.fillStyle=RP1;
                 context.fill();
+                RPsum[1]=RPsum[1]+1;
                 break;
         }
         UPxy.push(xy);
@@ -354,10 +368,13 @@
         logtxt.innerHTML=logtxt.innerHTML+logNo+'. <span style=\"color:'+p+'\"'+'>'+p+'玩家'+'</span>'+'在坐标'+xy+'建造基地<br>';
         //拼接字符串 修改样式
         logNo+=1;
+        if(logNo%10==0){
+            logtxt.innerHTML='';
+        }
     }
     function dataCount() {
         document.getElementById('Base1').innerHTML=UP1xy.length.toString();
-    }
+    } //显示base
 
     function bugDetector(UPxy){
         var hash={};
@@ -390,8 +407,9 @@
     function run(){
         dataCount();
         bugDetector(UP1xy);
-        baseBuild(UP1xy,UP1); //这里有一个先后问题，p1优先，方便后续逻辑判断。
-        baseBuild(UP2xy,UP2);
+        baseBuild(UP1xy,UP1,RP1Sum); //这里有一个先后问题，p1优先，方便后续逻辑判断。
+        baseBuild(UP2xy,UP2,RP1Sum);
+        RGain1=resourceGain(UP1xy,RP1Sum,RGain1);
 
     }
 
